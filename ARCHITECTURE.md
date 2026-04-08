@@ -295,8 +295,6 @@ exactly that filename when downloading updates inside the app.
 
 - **No automated tests.** No unit, integration, or end-to-end test suite
   exists. Refactors must be manually verified in both the browser and the APK.
-- **Single theme.** Only Ember Dark is implemented. A light theme is on the
-  roadmap but not yet started.
 - **Android only.** There is no iOS Capacitor target. Adding one would require
   setting up Xcode signing and reproducing the launcher / splash assets.
 - **Comment depth.** Comment replies are limited by what Reddit's public JSON
