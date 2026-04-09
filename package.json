@@ -17,6 +17,9 @@
     "build": "vite build && npx cap sync",
     "preview": "vite preview"
   },
+  "engines": {
+    "node": ">=18"
+  },
   "dependencies": {
     "@capacitor/android": "^5.2.2",
     "@capacitor/app": "^5.0.6",
