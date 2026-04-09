@@ -218,8 +218,13 @@ async function change_autoplay() {
 }
 
 async function change_updates() {
-    check_for_updates.value = !check_for_updates.value;
-    localStorage.setItem("check_for_updates", JSON.stringify(check_for_updates.value));
+    const newValue = !check_for_updates.value;
+    if (newValue) {
+        const ok = window.confirm(t('update_check_warning'));
+        if (!ok) return;
+    }
+    check_for_updates.value = newValue;
+    localStorage.setItem("check_for_updates", JSON.stringify(newValue));
 }
 
 async function change_browser() {

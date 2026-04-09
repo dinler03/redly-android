@@ -28,7 +28,7 @@ if (!localStorage.getItem("title_size")) {
 }
 
 if (!localStorage.getItem("check_for_updates")) {
-    localStorage.setItem("check_for_updates", JSON.stringify(true));
+    localStorage.setItem("check_for_updates", JSON.stringify(false));
 }
 
 if (!localStorage.getItem("in_app_browser")) {

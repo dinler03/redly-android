@@ -99,6 +99,7 @@ const translations = {
         update_available: "A new version of Redly is available!",
         update: "Update",
         dont_ask: "Don't ask again",
+        update_check_warning: "Redly will contact api.github.com to check for new releases. If you installed Redly from F-Droid, F-Droid already handles updates for you and this option will bypass it. Enable anyway?",
 
         // App
         press_back: "Press back again to exit",
@@ -202,6 +203,7 @@ const translations = {
         update_available: "Redly'nin yeni bir sürümü mevcut!",
         update: "Güncelle",
         dont_ask: "Bir daha sorma",
+        update_check_warning: "Redly yeni sürümleri kontrol etmek için api.github.com'a bağlanacak. Eğer Redly'yi F-Droid'den yüklediyseniz, güncellemeleri zaten F-Droid yönetiyor ve bu seçenek onu devre dışı bırakır. Yine de açılsın mı?",
 
         // App
         press_back: "Çıkmak için tekrar geri basın",

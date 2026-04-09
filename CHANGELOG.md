@@ -7,7 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-_Nothing yet._
+### Changed
+
+- The "Check for updates" setting is now **off by default** on new
+  installs. When users enable it manually, a confirmation dialog explains
+  that Redly will reach out to `api.github.com` and that this bypasses
+  F-Droid's update mechanism if Redly was installed from F-Droid. Existing
+  users keep their previous preference.
+
+### Removed
+
+- Unused Google Services gradle blocks from `android/build.gradle` and
+  `android/app/build.gradle` so the F-Droid scanner no longer flags them.
 
 ## [0.1.0] — 2026-04-08
 
