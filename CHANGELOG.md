@@ -18,7 +18,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   users keep their previous preference.
 - Gradle wrapper upgraded from 8.0.2 to 8.7 (JDK 21 compatibility).
 - Android Gradle Plugin upgraded from 8.0.0 to 8.2.0.
-- `compileSdkVersion` and `targetSdkVersion` bumped from 33 to 34.
 
 ### Removed
 
