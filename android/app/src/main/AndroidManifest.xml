@@ -47,16 +47,16 @@
     </application>
 
     <!-- Permissions -->
-    <!-- Zorunlu: Reddit API erişimi -->
+    <!-- Required: Reddit API access -->
     <uses-permission android:name="android.permission.INTERNET" />
-    <!-- API ≤ 32: Harici depolama okuma (API 33+'da READ_MEDIA_* ile değiştirildi) -->
+    <!-- API ≤ 32: External storage read (replaced by READ_MEDIA_* on API 33+) -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
-    <!-- API ≤ 32: Harici depolama yazma (API 33+'da scoped storage / MediaStore ile değiştirildi) -->
+    <!-- API ≤ 32: External storage write (replaced by scoped storage / MediaStore on API 33+) -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
-    <!-- API 33+: Görsel indirme için -->
+    <!-- API 33+: Required for downloading images -->
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
-    <!-- API 33+: Video indirme için -->
+    <!-- API 33+: Required for downloading videos -->
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
 </manifest>
