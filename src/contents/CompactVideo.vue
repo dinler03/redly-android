@@ -190,7 +190,6 @@ async function update_current_time(x) {
 async function setup() {
     // Set video data
     if (!props.data.secure_media) {
-        console.log("No video data", props.data);
         return
     }
 

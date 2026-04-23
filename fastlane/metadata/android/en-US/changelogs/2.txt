@@ -1,3 +1,5 @@
+* Upgraded to Capacitor 8, Vue 3.5, Vue Router 5, and Vite 8.
+* Android SDK raised to compileSdk/targetSdk 36, minSdk 24 (Android 7.0+).
+* Android Gradle Plugin 8.13.0, Gradle wrapper 8.14.
 * "Check for updates" is now off by default; a dialog explains the trade-off.
-* Gradle 8.7, AGP 8.2.0, targetSdk 33 — ready for F-Droid builds.
 * Removed unused Google Services gradle references.

@@ -20,6 +20,6 @@ Features:
 * Optional automatic in-app update check via GitHub Releases
 * Fully local: no telemetry, no tracking, no analytics
 
-Redly is built with Vue 3, Vite, and Capacitor 5, and is released under the GNU General Public License v3.0 or later.
+Redly is built with Vue 3, Vite, and Capacitor 8, and is released under the GNU General Public License v3.0 or later.
 
 Redly is an unofficial, third-party Reddit client. It is not affiliated with, endorsed by, or sponsored by Reddit, Inc. All Reddit content displayed in Redly belongs to its respective authors and is subject to Reddit's content policies.

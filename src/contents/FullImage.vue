@@ -107,8 +107,7 @@ async function download() {
         url: props.data.url,
         directory: Directory.Documents,
         path: `/redly/${filename}.${extension}`
-    }).then((res) => {
-        console.log(res);
+    }).then(() => {
         Toast.show({
             text: 'Image saved to gallery',
             duration: 'short'

@@ -31,11 +31,11 @@ If you are unsure whether a feature fits, open an issue first using the
 
 | Tool                 | Version       | Notes |
 |----------------------|---------------|-------|
-| Node.js              | 18 LTS or 20 LTS | Used by Vite + Capacitor CLI |
-| npm                  | 9 or newer    | Comes with Node |
+| Node.js              | **22 LTS** or newer | Required by Capacitor 8 CLI |
+| npm                  | 10 or newer   | Comes with Node |
 | JDK                  | **17** (Temurin) | Required by Android Gradle Plugin |
-| Android SDK          | Platform 33   | `compileSdk` and `targetSdk` are 33 |
-| Android build tools  | 33.x          | Auto-installed by Android Studio |
+| Android SDK          | Platform **36** | `compileSdk` and `targetSdk` are 36 |
+| Android build tools  | 35.x or newer | Auto-installed by Android Studio |
 
 You do **not** need to install Gradle separately — the Gradle wrapper
 (`android/gradlew`) is checked in.
