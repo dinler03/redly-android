@@ -40,6 +40,7 @@ import { useRouter } from 'vue-router';
 import FullPost from './FullPost.vue';
 import { Redly } from "/js/redly.js";
 import { t } from '/js/i18n.js';
+import { processCommentMedia } from '/js/media.js';
 
 const router = useRouter();
 const redly = new Redly();
@@ -71,7 +72,7 @@ function decodeHtml(html) {
 }
 
 function markdown(body) {
-    return decodeHtml(body);
+    return processCommentMedia(decodeHtml(body));
 }
 
 async function open_user(author) {

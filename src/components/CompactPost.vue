@@ -82,6 +82,8 @@ import CompactEmbed from '/contents/CompactEmbed.vue';
 import CompactLink from '/contents/CompactLink.vue';
 import CompactGallery from '/contents/CompactGallery.vue';
 import CompactFallback from '../contents/CompactFallback.vue';
+import YouTubeEmbed from '/contents/YouTubeEmbed.vue';
+import RedgifsVideo from '/contents/RedgifsVideo.vue';
 
 const router = useRouter();
 
@@ -95,7 +97,9 @@ const types = {
     CompactEmbed,
     CompactLink,
     CompactGallery,
-    CompactFallback
+    CompactFallback,
+    YouTubeEmbed,
+    RedgifsVideo
 }
 
 const props = defineProps({
@@ -171,6 +175,30 @@ async function get_type() {
     if (props.post.domain == "i.redd.it") {
         type.value = "CompactImage";
         return
+    }
+
+    // YouTube embed
+    const postUrl = props.post.url || props.post.url_overridden_by_dest || '';
+    if (
+        props.post.domain === 'youtube.com' ||
+        props.post.domain === 'youtu.be' ||
+        props.post.domain === 'm.youtube.com' ||
+        props.post.domain === 'www.youtube.com' ||
+        postUrl.includes('youtube.com/watch') ||
+        postUrl.includes('youtu.be/')
+    ) {
+        type.value = 'YouTubeEmbed';
+        return;
+    }
+
+    // Redgifs embed
+    if (
+        props.post.domain === 'redgifs.com' ||
+        props.post.domain === 'www.redgifs.com' ||
+        postUrl.includes('redgifs.com/watch')
+    ) {
+        type.value = 'RedgifsVideo';
+        return;
     }
 
     // embed

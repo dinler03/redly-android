@@ -56,6 +56,8 @@ import CompactEmbed from '/contents/CompactEmbed.vue';
 import CompactLink from '/contents/CompactLink.vue';
 import FullGallery from '/contents/FullGallery.vue';
 import PollView from '/contents/PollView.vue';
+import YouTubeEmbed from '/contents/YouTubeEmbed.vue';
+import RedgifsVideo from '/contents/RedgifsVideo.vue';
 
 const router = useRouter();
 const type = ref(null);
@@ -66,7 +68,9 @@ const types = {
     FullVideo,
     CompactEmbed,
     CompactLink,
-    FullGallery
+    FullGallery,
+    YouTubeEmbed,
+    RedgifsVideo
 }
 
 const props = defineProps({
@@ -113,6 +117,30 @@ async function get_type() {
     if (props.post.data.domain == "i.redd.it") {
         type.value = "FullImage";
         return
+    }
+
+    // YouTube embed
+    const postUrl = props.post.data.url || props.post.data.url_overridden_by_dest || '';
+    if (
+        props.post.data.domain === 'youtube.com' ||
+        props.post.data.domain === 'youtu.be' ||
+        props.post.data.domain === 'm.youtube.com' ||
+        props.post.data.domain === 'www.youtube.com' ||
+        postUrl.includes('youtube.com/watch') ||
+        postUrl.includes('youtu.be/')
+    ) {
+        type.value = 'YouTubeEmbed';
+        return;
+    }
+
+    // Redgifs embed
+    if (
+        props.post.data.domain === 'redgifs.com' ||
+        props.post.data.domain === 'www.redgifs.com' ||
+        postUrl.includes('redgifs.com/watch')
+    ) {
+        type.value = 'RedgifsVideo';
+        return;
     }
 
     // embed

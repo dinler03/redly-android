@@ -57,6 +57,7 @@ import { useRouter } from 'vue-router';
 import { store, hide, unhide } from '/js/store.js';
 import { t } from '/js/i18n.js';
 import { format_relative_time } from '/js/util.js';
+import { processCommentMedia } from '/js/media.js';
 
 const router = useRouter();
 
@@ -105,7 +106,7 @@ function decodeHtml(html) {
 }
 
 function markdown(body) {
-    return decodeHtml(body);
+    return processCommentMedia(decodeHtml(body));
 }
 
 function handle_link_click(event) {
