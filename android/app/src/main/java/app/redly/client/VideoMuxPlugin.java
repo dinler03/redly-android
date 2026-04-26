@@ -41,13 +41,19 @@ public class VideoMuxPlugin extends Plugin {
      */
     @PluginMethod
     public void muxAndSave(PluginCall call) {
-        final String videoUrl    = call.getString("videoUrl");
-        final String outputPath  = call.getString("outputPath");
+        final String videoUrl   = call.getString("videoUrl");
+        final String rawOutput  = call.getString("outputPath");
 
-        if (videoUrl == null || outputPath == null) {
+        if (videoUrl == null || rawOutput == null) {
             call.reject("videoUrl and outputPath are required");
             return;
         }
+
+        // Filesystem.getUri() returns a "file:///..." URI; MediaMuxer needs
+        // a plain file-system path.  Strip the scheme if present.
+        final String outputPath = rawOutput.startsWith("file://")
+                ? android.net.Uri.parse(rawOutput).getPath()
+                : rawOutput;
 
         // audioCandidates is a JSON array of strings
         final com.getcapacitor.JSArray rawCandidates = call.getArray("audioCandidates");

@@ -47,20 +47,15 @@
 import { ref, onBeforeUnmount, onBeforeMount, onMounted, onDeactivated } from 'vue';
 import Hls from 'hls.js';
 import { useIntersectionObserver } from '@vueuse/core'
-import { Capacitor } from '@capacitor/core';
+import { Capacitor, registerPlugin } from '@capacitor/core';
 import { Filesystem, Directory } from '@capacitor/filesystem';
 import { Toast } from '@capacitor/toast';
 import { t } from '/js/i18n.js';
 import { ensure_storage_permission } from '/js/util.js';
 
-// Lazy-import the native VideoMux plugin only on native platforms.
-// On web it is unavailable and we fall back to video-only download.
-let VideoMux = null;
-if (Capacitor.isNativePlatform()) {
-    import('@capacitor/core').then(({ registerPlugin }) => {
-        VideoMux = registerPlugin('VideoMux');
-    });
-}
+// Register the native VideoMux plugin synchronously at module-init time.
+// registerPlugin() is a no-op on web so this is always safe to call.
+const VideoMux = Capacitor.isNativePlatform() ? registerPlugin('VideoMux') : null;
 
 let hls = null;
 const video = ref(null);
