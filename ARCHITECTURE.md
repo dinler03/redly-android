@@ -305,20 +305,29 @@ registered in `MainActivity.onCreate()` before `super.onCreate()`.
 
 ### `VideoMuxPlugin` (`name = "VideoMux"`)
 
-Exposed method: `muxAndSave({ videoUrl, audioCandidates[], outputPath })`
+Exposed method: `muxAndSave({ videoUrl, audioUrl, outputPath })`
 
-Downloads a video-only MP4 (`videoUrl`) and probes each entry in
-`audioCandidates` in order, downloading the first that returns HTTP 200.
-If audio is found, Android's `MediaMuxer` combines the two tracks into a
-single `.mp4` at `outputPath`. If no audio candidate responds, the video-only
-file is copied to `outputPath` instead. All network I/O and muxing run on a
-background thread; the call resolves on the UI thread.
+Downloads `videoUrl` (a video-only MP4) and `audioUrl` (an audio-only MP4),
+then combines them with Android's `MediaMuxer` into a single `.mp4` at
+`outputPath`. If `audioUrl` is empty (the video has no audio track), the
+video-only file is copied to `outputPath` unchanged. `outputPath` may be
+either a plain filesystem path or a `file://` URI — the plugin strips the
+scheme. All network I/O and muxing run on a background thread; the call
+resolves on the UI thread.
+
+Audio URL discovery is done in JavaScript before this method is called.
+`FullVideo.vue#findAudioUrl()` fetches `https://v.redd.it/{id}/DASHPlaylist.mpd`,
+parses it with the WebView's built-in `DOMParser`, picks the highest-bandwidth
+audio `Representation`, and resolves its `<BaseURL>` against the manifest URL.
+This mirrors `yt-dlp`'s strategy and avoids the candidate-probing approach,
+which silently dropped audio for posts whose audio file used an unexpected
+filename (Reddit has used five different audio filenames over the years).
 
 Called by `FullVideo.vue` → `download()` via:
 ```js
 import { registerPlugin } from '@capacitor/core';
 const VideoMux = registerPlugin('VideoMux');
-await VideoMux.muxAndSave({ videoUrl, audioCandidates, outputPath });
+await VideoMux.muxAndSave({ videoUrl, audioUrl, outputPath });
 ```
 
 ---

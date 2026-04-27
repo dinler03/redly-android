@@ -166,4 +166,20 @@ onMounted(async function load() {
     right: 8px;
     z-index: 2;
 }
+
+/* When the <video> goes into native HTML5 fullscreen the inline
+   `aspect-ratio: w/h` constraint we set after metadata-load fights with
+   the fullscreen viewport, distorting the picture.  Reset the constraint
+   in fullscreen and let object-fit:contain letterbox / pillarbox the
+   content to the screen at its true ratio. */
+video:fullscreen,
+video:-webkit-full-screen {
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: none !important;
+    max-height: none !important;
+    aspect-ratio: auto !important;
+    object-fit: contain !important;
+    background: #000;
+}
 </style>

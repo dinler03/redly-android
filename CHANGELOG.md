@@ -7,31 +7,49 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1] — 2026-04-27
+
 ### Added
 
 - **`VideoMuxPlugin`** — new native Capacitor plugin (`app.redly.client`)
-  that downloads a Reddit video-only DASH stream and its matching audio-only
-  stream, then combines them on-device using Android's `MediaMuxer`. No
-  third-party libraries required. Called automatically by `FullVideo.vue`
-  when the user taps the download button.
+  that combines a Reddit video-only DASH stream with its matching
+  audio-only stream on-device using Android's `MediaMuxer`. No third-party
+  libraries required. Called automatically by `FullVideo.vue` when the
+  user taps the download button.
+- **DASH manifest parsing** in `FullVideo.vue` (`findAudioUrl()`) — the
+  audio stream URL is now resolved by fetching
+  `https://v.redd.it/{id}/DASHPlaylist.mpd` and reading the audio
+  `Representation`'s `<BaseURL>`. This mirrors `yt-dlp`'s strategy and is
+  the only reliable approach: Reddit has used at least five different
+  audio filenames over the years (CMAF_AUDIO_*, DASH_AUDIO_*,
+  `DASH_audio.mp4`, `audio.mp4`, even just `audio` with no extension on
+  pre-2020 posts).
 
 ### Fixed
 
-- **Video downloads now include audio.** Previously the download button saved
-  the video-only DASH fallback URL (`DASH_1080.mp4`) which has no audio.
-  The new `VideoMuxPlugin` probes the five known Reddit audio filename
-  candidates (`CMAF_AUDIO_128.mp4`, `CMAF_AUDIO_64.mp4`,
-  `DASH_AUDIO_128.mp4`, `DASH_AUDIO_64.mp4`, `DASH_audio.mp4`) and muxes
-  the first one that responds HTTP 200 with the video track. Falls back
-  gracefully to the video-only file if no audio stream is found.
+- **Video downloads now include audio.** Previously the download button
+  saved the video-only DASH fallback URL (`DASH_1080.mp4`), which has no
+  audio. After fixing several layered bugs, downloads are now muxed `.mp4`
+  files containing both tracks:
+  - `registerPlugin('VideoMux')` was being called inside an async
+    `.then()` callback, so the plugin reference was still `null` when
+    `download()` ran. It's now registered synchronously at module init.
+  - `Filesystem.getUri()` returns a `file:///...` URI, but `MediaMuxer`
+    needs a plain filesystem path. The Java plugin now strips the scheme
+    via `Uri.parse().getPath()`.
+  - The `MediaMuxer` sample buffer was 1 MB, smaller than 1080p H.264
+    keyframes; raised to 4 MB.
+  - Audio URL discovery was a hardcoded probe list that missed older
+    posts; replaced with a DASH manifest parse (see "Added" above).
 - **Redgifs fullscreen distortion fixed.** `RedgifsVideo.vue` previously
   forced `aspect-ratio: 16/9` on every video element, squishing portrait
   and square Redgifs content. The aspect ratio is now computed from
-  `videoWidth` / `videoHeight` after `loadedmetadata` fires. `object-fit:
-  contain` ensures letterboxing/pillarboxing in fullscreen rather than
-  stretching.
+  `videoWidth` / `videoHeight` after `loadedmetadata` fires, and a
+  `:fullscreen` CSS rule resets the constraint when the video enters
+  native HTML5 fullscreen, so the picture letterboxes / pillarboxes to
+  the screen instead of distorting.
 
-## [0.1.1] — 2026-04-23
+## [0.1.1-prev] — 2026-04-23
 
 ### Changed
 
@@ -118,4 +136,5 @@ original GPL-3.0 copyright is preserved in [`LICENSE`](./LICENSE) and
 
 [Unreleased]: https://github.com/dinler03/redly/compare/v0.1.1...HEAD
 [0.1.1]: https://github.com/dinler03/redly/compare/v0.1.0...v0.1.1
+[0.1.1-prev]: https://github.com/dinler03/redly/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/dinler03/redly/releases/tag/v0.1.0

@@ -57,32 +57,74 @@ import { ensure_storage_permission } from '/js/util.js';
 // registerPlugin() is a no-op on web so this is always safe to call.
 const VideoMux = Capacitor.isNativePlatform() ? registerPlugin('VideoMux') : null;
 
-// Probe Reddit's known audio filename patterns with a HEAD request.
-// Returns the first URL that responds HTTP 2xx, or null if none found.
-// Doing this in JS means we know before calling Java whether audio exists.
+// Resolve the audio stream URL by fetching and parsing Reddit's DASH manifest
+// (https://v.redd.it/{id}/DASHPlaylist.mpd).  The manifest lists every video
+// and audio Representation with its exact filename — parsing it is the only
+// reliable way to find the audio URL, because Reddit has used many different
+// audio filenames over the years (CMAF_AUDIO_*, DASH_AUDIO_*, DASH_audio.mp4,
+// audio.mp4, even just "audio" with no extension on older posts).
+//
+// This mirrors yt-dlp's approach for v.redd.it videos.
+// Returns the highest-bandwidth audio URL, or null if the video has no audio.
 async function findAudioUrl(fallback_url) {
     const m = fallback_url.match(/^(https:\/\/v\.redd\.it\/[^/?#]+)\//i);
     if (!m) return null;
-    const base = m[1];
-    const candidates = [
-        `${base}/CMAF_AUDIO_128.mp4`,  // 2024+ (primary)
-        `${base}/CMAF_AUDIO_64.mp4`,
-        `${base}/DASH_AUDIO_128.mp4`,  // 2022–2024
-        `${base}/DASH_AUDIO_64.mp4`,
-        `${base}/DASH_audio.mp4`,      // pre-2022
-    ];
-    for (const url of candidates) {
-        try {
-            const r = await CapacitorHttp.request({
-                url,
-                method: 'HEAD',
-                connectTimeout: 5000,
-                readTimeout: 5000,
-            });
-            if (r.status >= 200 && r.status < 300) return url;
-        } catch (_) { /* try next */ }
+    const manifestUrl = `${m[1]}/DASHPlaylist.mpd`;
+
+    let xml;
+    try {
+        const r = await CapacitorHttp.request({
+            url: manifestUrl,
+            method: 'GET',
+            responseType: 'text',
+            connectTimeout: 10000,
+            readTimeout: 10000,
+        });
+        if (r.status < 200 || r.status >= 300) return null;
+        xml = typeof r.data === 'string' ? r.data : String(r.data ?? '');
+        if (!xml) return null;
+    } catch (e) {
+        console.warn('DASH manifest fetch failed', e);
+        return null;
     }
-    return null;
+
+    let doc;
+    try {
+        doc = new DOMParser().parseFromString(xml, 'text/xml');
+        if (doc.querySelector('parsererror')) return null;
+    } catch (_) {
+        return null;
+    }
+
+    // Find every Representation that lives under an audio AdaptationSet,
+    // or whose own mimeType / id identifies it as audio.  Older manifests
+    // (~2019) lack contentType="audio" and use id="AUDIO-1" instead.
+    const reps = doc.getElementsByTagName('Representation');
+    let bestRep = null;
+    let bestBw = -1;
+    for (const rep of reps) {
+        const parent = rep.parentElement;
+        const isAudio =
+            (parent && parent.getAttribute('contentType') === 'audio') ||
+            (rep.getAttribute('mimeType') || '').startsWith('audio/') ||
+            (rep.getAttribute('id') || '').toUpperCase().startsWith('AUDIO');
+        if (!isAudio) continue;
+        const bw = parseInt(rep.getAttribute('bandwidth') || '0', 10);
+        if (bw > bestBw) { bestBw = bw; bestRep = rep; }
+    }
+    if (!bestRep) return null;
+
+    const baseEl = bestRep.getElementsByTagName('BaseURL')[0];
+    if (!baseEl) return null;
+    const relative = baseEl.textContent.trim();
+    if (!relative) return null;
+
+    // Resolve relative path ("audio", "DASH_AUDIO_128.mp4", ...) against manifest URL.
+    try {
+        return new URL(relative, manifestUrl).href;
+    } catch (_) {
+        return null;
+    }
 }
 
 let hls = null;

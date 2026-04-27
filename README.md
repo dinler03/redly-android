@@ -45,7 +45,10 @@ distributed as an Android application.
 - YouTube embed playback inside the app
 - Follow your favorite communities locally — no account required
 - **Download videos with audio** — Reddit videos are downloaded as a single
-  muxed `.mp4` (video + audio combined on-device via Android `MediaMuxer`)
+  muxed `.mp4` (video + audio combined on-device via Android `MediaMuxer`).
+  The audio stream URL is resolved by parsing Reddit's DASH manifest, the
+  same approach `yt-dlp` uses, so audio is found reliably across every
+  video age and codec variant Reddit has shipped.
 - Save images to device storage
 - Linear comment trees with collapse / expand
 - Share posts as standard or `old.reddit.com` links
